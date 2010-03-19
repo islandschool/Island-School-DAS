@@ -1,23 +1,27 @@
 #!/usr/bin/env ruby
-
 require 'rubygems'
-require 'rmodbus'
-require 'bindata'
+require 'modbus_device'
 
 id = ARGV[0].to_i
 reg = ARGV[1].to_i
 
-cl = ModBus::RTUClient.new('com3', 9600, id)
-data = cl.read_holding_registers(reg, 2)
+dev = ModbusDevice.new('com3', id)
 
-a = BinData::Int16be.new
-a.value = data[0]
-a.to_binary_s
+loop do
+  begin 
+    dev.slave_address = 1
+    puts dev.read_holding_registers(reg, 2, true)
+    
+    dev.slave_address = 2
+    puts dev.read_holding_registers(reg, 2, true)
 
-b = BinData::Int16be.new
-b.value = data[0]
-b.to_binary_s
+	  sleep 5
 
-fl = BinData::FloatBe.read(a.to_binary_s+b.to_binary_s)
+  rescue Exception => e  
+	  unless e.nil? 
+      puts e.message  
+      puts e.backtrace.inspect
+    end
+  end
+end
 
-puts fl.to_s
