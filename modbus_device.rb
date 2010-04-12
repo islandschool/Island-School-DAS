@@ -65,6 +65,7 @@ class ModbusDevice
     # disconnect from device to release lock
     disconnect
   
+    # TODO: if array size =1, return value?
     return data
   end
   
