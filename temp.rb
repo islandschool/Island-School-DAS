@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'active_record'
-#require 'app/models/temperature'
+require 'config/environment'
 require 'sda_utility'
 require 'eeml'
 require 'modbus_device'
@@ -17,6 +17,9 @@ dev = ModbusDevice.new('com3', 1)
 # loop over and over again
 loop do
   data = EEML::Environment.new 
+
+  r = Reading.new
+  r.save  
 
   begin
     dev.slave_address = 1
@@ -40,16 +43,30 @@ loop do
     
   # ensure that environmental data is reloaded  
   if env.reload
-    # save data as new record
-    #t = Temperature.new(:value => env["TAMB"])
-    #t.save
+    
+    begin
+      # create models and save
+      t = Temperature.new(:value => env.temperature, :reading_id => r.id)
+      t.save
   
-    # post to pachube for archiving
-    data << EEML::Data.new(env.temperature, :id => "temperature")
-    data << EEML::Data.new(env.windspeed, :id => "windspeed")
-    data << EEML::Data.new(env.irradiance, :id => "irradiance")
-  end  
-
+      i = Solar.new(:irradiance => env.irradiance, :reading_id => r.id)
+      i.save
+  
+      w = Wind.new(:speed => env.windspeed, :reading_id => r.id)
+      w.save
+  
+      # post to pachube for archiving
+      data << t.to_eeml
+      data << w.to_eeml
+      data << i.to_eeml
+    rescue Exception => e  
+      unless e.nil? 
+        puts e.message  
+        # puts e.backtrace.inspect
+      end
+    end
+  end
+  
   begin
     if data
       req.body = data.to_eeml
@@ -63,5 +80,5 @@ loop do
   end
  
   # wait for next reading 
-  sleep 10
+  sleep 9
 end

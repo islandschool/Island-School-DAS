@@ -2,8 +2,7 @@ class CreateTemperatures < ActiveRecord::Migration
   def self.up
     create_table :temperatures do |t|
       t.float :value
-
-      t.timestamps
+      t.references :reading
     end
   end
 
