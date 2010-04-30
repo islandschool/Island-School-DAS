@@ -14,12 +14,20 @@ req = Net::HTTP::Put.new('/api/6286.xml', {'X-PachubeApiKey' => '3eda9134d9fc9cd
 env = SdaUtility.new
 dev = ModbusDevice.new('com3', 1)
 
+save = false
+
 # loop over and over again
 loop do
   data = EEML::Environment.new 
-
-  r = Reading.new
-  r.save  
+  
+  begin
+    r = Reading.new
+  # save = r.save
+  rescue Exception => e  
+    unless e.nil? 
+      puts e.message  
+    end
+  end 
 
   begin
     dev.slave_address = 1
@@ -28,9 +36,9 @@ loop do
     dev.slave_address = 2
     prod = dev.read_holding_registers(770, 2, true)
     
-    if prod[0].nan?
-      prod[0] = 0
-    end
+#    if prod[0].nan?
+#      prod[0] = 0
+#    end
     
     data << EEML::Data.new(cons[0], :id => "consumption")
     data << EEML::Data.new(prod[0], :id => "production")
@@ -47,13 +55,13 @@ loop do
     begin
       # create models and save
       t = Temperature.new(:value => env.temperature, :reading_id => r.id)
-      t.save
+      t.save unless !save
   
       i = Solar.new(:irradiance => env.irradiance, :reading_id => r.id)
-      i.save
+      i.save unless !save
   
       w = Wind.new(:speed => env.windspeed, :reading_id => r.id)
-      w.save
+      w.save unless !save
   
       # post to pachube for archiving
       data << t.to_eeml

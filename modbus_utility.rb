@@ -7,7 +7,13 @@ def to_float (int1,int2)
   b = to_bin_s(int2)
 
   # combine and return as a float
-  return BinData::FloatBe.read(a+b)
+  prod = BinData::FloatBe.read(a+b)
+  
+  if prod.nan?
+      prod = 0
+  end
+  
+  return prod
 end
 
 def to_bin_s (hex)
