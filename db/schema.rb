@@ -9,25 +9,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100426012429) do
+ActiveRecord::Schema.define(:version => 20100430015050) do
 
   create_table "readings", :force => true do |t|
     t.datetime "created_at"
   end
 
-  create_table "solars", :force => true do |t|
+  create_table "weather_readings", :force => true do |t|
+    t.float   "temperature"
     t.float   "irradiance"
-    t.integer "reading_id"
-  end
-
-  create_table "temperatures", :force => true do |t|
-    t.float   "value"
-    t.integer "reading_id"
-  end
-
-  create_table "winds", :force => true do |t|
-    t.float   "speed"
-    t.float   "direction"
+    t.float   "wind_speed"
+    t.float   "wind_direction"
     t.integer "reading_id"
   end
 
