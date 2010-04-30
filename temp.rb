@@ -18,11 +18,11 @@ save = false
 
 # loop over and over again
 loop do
-  data = EEML::Environment.new 
+  data = EEML::Environment.new
   
   begin
     r = Reading.new
-  # save = r.save
+    save = r.save
   rescue Exception => e  
     unless e.nil? 
       puts e.message  
@@ -35,17 +35,12 @@ loop do
 
     dev.slave_address = 2
     prod = dev.read_holding_registers(770, 2, true)
-    
-#    if prod[0].nan?
-#      prod[0] = 0
-#    end
-    
+        
     data << EEML::Data.new(cons[0], :id => "consumption")
     data << EEML::Data.new(prod[0], :id => "production")
   rescue Exception => e  
     unless e.nil? 
       puts e.message  
-      # puts e.backtrace.inspect
     end
   end   
     
@@ -54,19 +49,16 @@ loop do
     
     begin
       # create models and save
-      t = Temperature.new(:value => env.temperature, :reading_id => r.id)
-      t.save unless !save
-  
-      i = Solar.new(:irradiance => env.irradiance, :reading_id => r.id)
-      i.save unless !save
-  
-      w = Wind.new(:speed => env.windspeed, :reading_id => r.id)
+      w = WeatherReading.new(:temperature => env.temperature,
+                             :irradiance => env.irradiance, 
+                             :wind_speed => env.windspeed,
+                             :reading_id => r.id)
       w.save unless !save
-  
+    
       # post to pachube for archiving
-      data << t.to_eeml
-      data << w.to_eeml
-      data << i.to_eeml
+      w.to_eeml.each do |datum|
+        data << datum
+      end
     rescue Exception => e  
       unless e.nil? 
         puts e.message  
@@ -79,6 +71,7 @@ loop do
     if data
       req.body = data.to_eeml
       resp = http.request(req)
+      #puts resp
     end
   rescue Exception => e  
     unless e.nil? 
