@@ -5,7 +5,7 @@ require 'modbus_utility'
 class ModbusDevice
   attr_accessor :port, :slave_address, :baud_rate
 
-  def initialize (port, slave_address)
+  def initialize (port = 'com3', slave_address = 1)
     @port = port
     @slave_address = slave_address
     @baud_rate = 9600
@@ -49,6 +49,8 @@ class ModbusDevice
     if convert      
       buffer = Array.new
       
+      #puts data
+      
       # cycle through each pair of 16bit ints to create 32bit floats
       data.each_index do |i|
         # only use even indexes
@@ -66,6 +68,16 @@ class ModbusDevice
     disconnect
   
     # TODO: if array size =1, return value?
+    return data
+  end
+  
+  def read (port, slave, starting_reg, range, convert = true)
+    @port = port
+    @slave_address = slave
+    data =  read_holding_registers(starting_reg, range, convert)\
+    
+    disconnect
+    
     return data
   end
   
