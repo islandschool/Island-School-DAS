@@ -210,10 +210,20 @@ loop do
 
     data << is_re.to_eeml
     data << is_gt.to_eeml
-    data << is_bec.to_eeml unless is_bec.nil?
-    data << is_gen.to_eeml unless is_gen.nil?
     data << cei_re.to_eeml
- 
+
+    if is_bec.nil?
+      data << EEML::Data.new(0, :id => "is-bec")
+    else  
+      data << is_bec.to_eeml unless is_bec.nil?
+    end
+    
+    if is_gen.nil?
+      data << EEML::Data.new(0, :id => "is-generator")
+    else
+      data << is_gen.to_eeml
+    end
+      
   rescue Exception => e  
     unless e.nil? 
       puts e.message
