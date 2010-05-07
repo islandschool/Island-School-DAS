@@ -213,13 +213,13 @@ loop do
     data << cei_re.to_eeml
 
     if is_bec.nil?
-      data << EEML::Data.new(0, :id => "is-bec")
+      data << EEML::Data.new(0.0, :id => "is-bec")
     else  
       data << is_bec.to_eeml unless is_bec.nil?
     end
     
     if is_gen.nil?
-      data << EEML::Data.new(0, :id => "is-generator")
+      data << EEML::Data.new(0.0, :id => "is-generator")
     else
       data << is_gen.to_eeml
     end
