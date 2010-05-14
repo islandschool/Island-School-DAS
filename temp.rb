@@ -200,6 +200,26 @@ loop do
                               :source_id => 7)
     is_bhld.save unless !save
 
+    # IS Dining hall loads - This is a bit hacky:
+    # taking current of one leg x 2, using voltage from IS main loads PT
+    is_dh = EnergyReading.new(:frequency => pt1[0],
+                              :voltage => pt1[2],
+                              :voltage_a => pt1[2],
+                              :voltage_b => 0.0,
+                              :current => pt2[10] * 2,
+                              :current_a => pt2[10],
+                              :current_b => 0.0,
+                              :power => pt2[10]*pt1[2]*2,
+                              :power_a => pt3[13],
+                              :power_b => 0.0,
+                              :energy => pt2[34]*2,
+                              :energy_a => pt2[34],
+                              :energy_b => 0.0,
+                              :reading_id => r.id,
+                              :source_id => 10)
+    is_dh.save unless !save
+
+
     # now that all data is stored and saved, add to EEML data for pachube
     
     
