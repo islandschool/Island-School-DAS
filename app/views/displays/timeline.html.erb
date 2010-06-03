@@ -1,0 +1,7 @@
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<% content_for :title, "Energy at The Island School" %>
+<h1>Energy at The Island School</h1>
+
+<%= annotated_timeline @data, 'graph', {:annotations => @annotations} %>
+
+<div id='graph' style='width: 600px; height: 300px'></div>
