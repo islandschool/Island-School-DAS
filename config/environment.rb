@@ -10,6 +10,7 @@ Rails::Initializer.run do |config|
   # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
   config.time_zone = 'UTC'
 
-  # limit log to 50 MB
-  #config.logger = Logger.new(config.log_path, 50, 1024^2)
+  # limit log to 3 x 5 MB files, log to STDOUT for console
+  #config.logger = Logger.new(Rails.root.join("log", Rails.env + ".log"),3,5*1024*1024)  
+  
 end

@@ -1,32 +1,31 @@
 # require 'googlecharts'
+include DisplaysHelper
 
 class DisplaysController < ApplicationController
   def orb
-    cons = EnergyReading.yesterday(1)
-    prod = EnergyReading.yesterday(2)
-    @today = Date.today
-    
-    @consumption = cons.round(1).to_s
-    @production = prod.round(1).to_s
-        
-    @red = 0
-    @green = 0
-    @blue = 0
-    
-    @red = case cons
-      when 0..2.99 then 0
-      when 3..6.99 then 100
-      when 7..9.99 then 200
-      else 300
-    end
-    
-    @green = case prod
-      when 0..4.99 then 0
-      when 5..14.99 then 100
-      when 15..21.99 then 200
-      else 0
-    end
+    cons_yest = EnergyReading.yesterday(1)
+    prod_yest = EnergyReading.yesterday(2)
 
+    cons_now = EnergyReading.now(1)
+    prod_now = EnergyReading.now(2)
+    
+    @used_yest = cons_yest.round(1).to_s
+    @made_yest = prod_yest.round(1).to_s
+    
+    @used_now = cons_now.round(2).to_s
+    @make_now = prod_now.round(2).to_s
+        
+    colors = to_colors(cons_now, prod_now, cons_yest, prod_yest)
+
+    @red = colors[:red]
+    @green = colors[:green]
+    @blue = colors[:blue]
+    
+    weather = WeatherReading.find(:last)
+    @wspd = weather.wind_speed.round(1)
+    @temp = weather.temperature.to_int
+    @irrd = weather.irradiance.to_int
+    
   end
   
   def yesterday
@@ -54,14 +53,12 @@ class DisplaysController < ApplicationController
     @data = {}
     
     if hourly
-      
       cons.each_index do |i|
         @data[DateTime.strptime(cons[i].local_time, "%Y-%m-%d %H:%M:%S").to_time] = 
               {:consumption => cons[i].energy, :production =>  prod[i].energy }
       end
       
-    else
-      
+    else 
       cons.each_index do |i|
         @data[Date.strptime(cons[i].local_date, "%Y-%m-%d")] = 
               {:consumption => cons[i].energy, :production =>  prod[i].energy }
