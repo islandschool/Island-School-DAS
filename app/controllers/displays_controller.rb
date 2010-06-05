@@ -4,9 +4,16 @@ include DisplaysHelper
 class DisplaysController < ApplicationController
   
   def index
+     @cons_yst = EnergyReading.yesterday(1).round(2).to_s
+     @prod_yst = EnergyReading.yesterday(2).round(2).to_s
+     @cons_now = EnergyReading.now(1).round(2).to_s
+     @prod_now = EnergyReading.now(2).round(2).to_s
   end
   
   def research
+  end
+  
+  def results
   end
   
   def orb

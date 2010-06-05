@@ -38,7 +38,7 @@
 </div>
           </div>
           <script type="text/javascript"><!--//--><![CDATA[//><!--
-new NavBar('widget0', 'javascripts/Widgets/Navbar', 'javascripts/Widgets/SharedResources', '.', {"path-to-root": "", "navbar-css": ".navbar {\n\tfont-family: 'Helvetica Neue', Arial, sans-serif;\n\tfont-size: .8em;\n\tcolor: #666666;\n\tline-height: 30px;\n\tborder-bottom: 3px solid #ccc;\n}\n\n.navbar-bg {\n\ttext-align: right;}\n\n.navbar-bg ul {\n\tlist-style: none;\n\tmargin: 0px;\n\tpadding: 0px;\n}\n\n\nli {\n\tlist-style-type: none;\n\tdisplay: inline;\n\tpadding: 0px 5px 0px 0px;\n}\n\n\nli a {\n\ttext-decoration: none;\n\tpadding: 10px;\n\tcolor: #666666;\n\tfont-weight: bold;\n}\n\nli a:visited {\n\ttext-decoration: none;\n\tpadding: 10px;\n\tcolor: #666666;\n\tfont-weight: bold;\n}\n\nli a:hover\r{\r\n \tcolor: #999999;\n\ttext-decoration: none;\r}\n\n\nli.current-page a\r{\r\t color: #66ABC5;\n\ttext-decoration: none;\r}", "current-page-GUID": "EDB0C0F8-9B11-4D3E-88C6-6E973F2CECDE", "isCollectionPage": "NO"});
+new NavBar('widget0', '/javascripts/Widgets/Navbar', '/javascripts/Widgets/SharedResources', '.', {"path-to-root": "", "navbar-css": ".navbar {\n\tfont-family: 'Helvetica Neue', Arial, sans-serif;\n\tfont-size: .8em;\n\tcolor: #666666;\n\tline-height: 30px;\n\tborder-bottom: 3px solid #ccc;\n}\n\n.navbar-bg {\n\ttext-align: right;}\n\n.navbar-bg ul {\n\tlist-style: none;\n\tmargin: 0px;\n\tpadding: 0px;\n}\n\n\nli {\n\tlist-style-type: none;\n\tdisplay: inline;\n\tpadding: 0px 5px 0px 0px;\n}\n\n\nli a {\n\ttext-decoration: none;\n\tpadding: 10px;\n\tcolor: #666666;\n\tfont-weight: bold;\n}\n\nli a:visited {\n\ttext-decoration: none;\n\tpadding: 10px;\n\tcolor: #666666;\n\tfont-weight: bold;\n}\n\nli a:hover\r{\r\n \tcolor: #999999;\n\ttext-decoration: none;\r}\n\n\nli.current-page a\r{\r\t color: #66ABC5;\n\ttext-decoration: none;\r}", "current-page-GUID": "EDB0C0F8-9B11-4D3E-88C6-6E973F2CECDE", "isCollectionPage": "NO"});
 //--><!]]></script>
           <div style="clear: both; height: 0px; line-height: 0px; " class="spacer"> </div>
         </div>
@@ -123,10 +123,12 @@ new NavBar('widget0', 'javascripts/Widgets/Navbar', 'javascripts/Widgets/SharedR
             <div class="text-content graphic_textbox_layout_style_default_External_391_117" style="padding: 0px; ">
               <div class="graphic_textbox_layout_style_default">
                 <p style="padding-top: 0pt; " class="paragraph_style_3">Current Consumption and Production<br /></p>
-                <p class="paragraph_style_3">Consumption:                Production:<br /></p>
+                <p class="paragraph_style_3">Consumption: <%= @cons_now %> kW<br /></p>
+				<p class="paragraph_style_3">Production: <%= @prod_now %> kW<br /></p>
                 <p class="paragraph_style_3"><br /></p>
                 <p class="paragraph_style_3">Yesterday’s Consumption and Production<br /></p>
-                <p style="padding-bottom: 0pt; " class="paragraph_style_3">Consumption:                Production:</p>
+				<p class="paragraph_style_3">Consumption: <%= @cons_yst %> kWh<br /></p>                
+				<p style="padding-bottom: 0pt; " class="paragraph_style_3">Production: <%= @prod_yst %> kWh</p>
               </div>
             </div>
           </div>

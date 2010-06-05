@@ -32,7 +32,14 @@ ActionController::Routing::Routes.draw do |map|
 
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
   map.root :controller => 'displays'
-
+  
+  # quick hack for iWeb pages -- TODO FIX ME!!
+  map.connect 'Home_Page.html', :controller => 'displays', :action => 'index'
+  map.connect 'research', :controller => 'displays', :action => 'research'
+  map.connect 'Energy_Research_Spring_2010.html', :controller => 'displays', :action => 'research'
+  map.connect 'results', :controller => 'displays', :action => 'results'
+  map.connect 'Results_and_analysis.html', :controller => 'displays', :action => 'results'  
+  
   # See how all your routes lay out with "rake routes"
 
   # Install the default routes as the lowest priority.
