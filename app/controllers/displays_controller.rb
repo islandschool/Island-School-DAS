@@ -17,9 +17,9 @@ class DisplaysController < ApplicationController
         
     colors = to_colors(cons_now, prod_now, cons_yest, prod_yest)
 
-    @red = colors[:red]
-    @green = colors[:green]
-    @blue = colors[:blue]
+    @red = colors['red']
+    @green = colors['green']
+    @blue = colors['blue']
     
     weather = WeatherReading.find(:last)
     @wspd = weather.wind_speed.round(1)
