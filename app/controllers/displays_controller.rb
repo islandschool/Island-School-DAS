@@ -2,6 +2,13 @@
 include DisplaysHelper
 
 class DisplaysController < ApplicationController
+  
+  def index
+  end
+  
+  def research
+  end
+  
   def orb
     cons_yest = EnergyReading.yesterday(1)
     prod_yest = EnergyReading.yesterday(2)
