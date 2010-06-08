@@ -1,6 +1,7 @@
 .DS_Store
 config/database.yml
-log/*.log
+config/pachube.yml
+log/*
 tmp/**/*
 doc/api
 doc/app

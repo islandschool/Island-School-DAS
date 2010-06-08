@@ -1,114 +1,85 @@
-require 'rubygems'
-require 'logger'
-require "win32/service"
-include Win32
+LOG_FILE = 'C:\\DAS\\log\\server.log'
 
-# installs polling loop as Windows service
-# based on http://blog.saush.com/2006/10/22/processing-rails-task-in-the-background/
+begin  
+   require 'C:\\DAS\\poller'
+   require 'win32/daemon'
+   include Win32
 
-SERVICE_NAME = "DAS Polling Daemon"
-SERVICE_DISPLAYNAME = "DasPollingDaemon"
-
-if ARGV[0] == "install"
-  svc = Service.new
-  svc.create_service{ |s|
-    s.service_name = SERVICE_NAME
-    s.display_name = SERVICE_DISPLAYNAME
-    s.binary_path_name = 'ruby ' + File.expand_path($0)
-    s.dependencies = []
-  }
-  svc.close
-  puts "installed"
-elsif ARGV[0] == "start"
-  Service.start(SERVICE_NAME)
-  # do stuff before starting
-  puts "Ok, started"
-elsif ARGV[0] == "stop"
-  Service.stop(SERVICE_NAME)
-  # do stuff before stopping
-  puts "Ok, stopped"
-elsif ARGV[0] == "uninstall" || ARGV[0] == "delete"
-  begin
-    Service.stop(SERVICE_NAME)
-  rescue
-  end
-  Service.delete(SERVICE_NAME)
-  # do stuff before deleting
-  puts "deleted"
-elsif ARGV[0] == "pause"
-  Service.pause(SERVICE_NAME)
-  # do stuff before pausing
-  puts "Ok, paused"
-elsif ARGV[0] == "resume"
-  Service.resume(SERVICE_NAME)
-  # do stuff before resuming
-  puts "Ok, resumed"
-else
-
-  if ENV["HOMEDRIVE"]!=nil
-  puts "No option provided.  You must provide an option.  Exiting..."
-  exit
-  end
-
-## SERVICE BODY START
-class Daemon
-  logger = Logger.new("c:/das/log/development.log")
-
-  def service_stop
-    logger.info "Service stopped"
-  end
-
-  def service_pause
-    logger.info "Service paused"
-  end
-
-  def service_resume
-    logger.info "Service resumed"
-  end
-
-  def service_init
-    logger.info "Service initializing"
-    # some initialization code for your process
-  end
-
-  ## worker function
-  def service_main
-    begin
-      while state == RUNNING || state == PAUSED
-        while state == RUNNING
-
-        # --- start processing code
-        messages = Message.find :all,
-        :conditions => ['sent = (?)', 0], # check if the message has been sent
-        :limit => 20 # retrieve and process 20 at a time
-
-# array of threads
-threads = []
-
-# iterate through each message
-for message in messages do
-# start a new thread to process the message
-threads <  e
-# do some rescuing
-puts "Failed: #{e.message}"
-end
-end
-end
-
-    # --- end processing code
-
-    end
-      if state == PAUSED
-      # if you want do something when the process is paused
+   class DasDaemon < Daemon
+      # This method fires off before the +service_main+ mainloop is entered.
+      # Any pre-setup code you need to run before your service's mainloop
+      # starts should be put here. Otherwise the service might fail with a
+      # timeout error when you try to start it.
+      #
+      def service_init
+         
       end
-    end
-      rescue StandardError, Interrupt => e
-        logger.error "Service error : #{e}"
+      
+      # This is the daemon's mainloop. In other words, whatever runs here
+      # is the code that runs while your service is running. Note that the
+      # loop is not implicit.
+      #
+      # You must setup a loop as I've done here with the 'while running?'
+      # code, or setup your own loop. Otherwise your service will exit and
+      # won't be especially useful.
+      #
+      # In this particular case, I've setup a loop to append a short message
+      # and timestamp to a file on your C: drive every 20 seconds. Be sure
+      # to stop the service when you're done!
+      #
+      def service_main(*args)
+         msg = 'service_main entered at: ' + Time.now.to_s
+         File.open(LOG_FILE, 'a'){ |f|
+            f.puts msg
+            f.puts "Args: " + args.join(',')
+         }
+          p = nil
+         
+         while running?
+            if state == RUNNING
+              p = Poller.new
+              p.poll
+            end
+         end
+      
+         p = nil
+          
+         File.open(LOG_FILE, 'a'){ |f| f.puts "STATE: #{state}" }
+      
+         msg = 'service_main left at: ' + Time.now.to_s
+         File.open(LOG_FILE, 'a'){ |f| f.puts msg }
       end
-    end
-  end
+   
+      # This event triggers when the service receives a signal to stop. I've
+      # added an explicit "exit!" here to ensure that the Ruby interpreter exits
+      # properly. I use 'exit!' instead of 'exit' because otherwise Ruby will
+      # raise a SystemExitError, which I don't want.
+      #
+      def service_stop
+         msg = 'Received stop signal at: ' + Time.now.to_s
+         File.open(LOG_FILE, 'a'){ |f| f.puts msg }
+         exit!
+      end
+      
+      # This event triggers when the service receives a signal to pause. 
+      #
+      def service_pause
+        #TODO: implement pause and resume
+      end
+      
+      # This event triggers when the service receives a signal to resume
+      # from a paused state.
+      #
+      def service_resume
+        #TODO: implement pause and resume
+      end
+   end
 
-  d = Daemon.new
-  d.mainloop
-
-end #if
+   # Create an instance of the Daemon and put it into a loop. I borrowed the
+   # method name 'mainloop' from Tk, btw.
+   #
+   DasDaemon.mainloop
+rescue Exception => err
+   File.open(LOG_FILE, 'a'){ |fh| fh.puts 'Daemon failure: ' + err }
+   raise
+end
