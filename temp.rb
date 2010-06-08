@@ -5,11 +5,9 @@ require 'sda_utility'
 require 'eeml'
 require 'modbus_device'
 
-ActiveRecord::Base.configurations = YAML::load(IO.read(File.dirname(__FILE__) + '/config/database.yml'))
-ActiveRecord::Base.establish_connection('development')
-
 http = Net::HTTP.new('www.pachube.com',80)
-req = Net::HTTP::Put.new('/api/6286.xml', {'X-PachubeApiKey' => '3eda9134d9fc9cdde8d8977e34f522409ed713d223583f1b5de352a206e7b320'})
+pconf = YAML::load(File.open('config/pachube.yml'))
+req = Net::HTTP::Put.new(pconf['feed'], {'X-PachubeApiKey' => pconf['key']})
 
 env = SdaUtility.new
 
@@ -268,8 +266,7 @@ loop do
       end
     rescue Exception => e  
       unless e.nil? 
-        puts e.message  
-        # puts e.backtrace.inspect
+        puts e.message
       end
     end
   end
@@ -283,7 +280,6 @@ loop do
   rescue Exception => e  
     unless e.nil? 
       puts e.message  
-      # puts e.backtrace.inspect
     end
   end
  

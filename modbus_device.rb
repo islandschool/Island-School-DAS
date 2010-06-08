@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'rmodbus'
-require 'modbus_utility'
+require 'c:\\das\\modbus_utility'
 
 class ModbusDevice
   attr_accessor :port, :slave_address, :baud_rate

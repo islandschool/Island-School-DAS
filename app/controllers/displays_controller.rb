@@ -4,16 +4,14 @@ include DisplaysHelper
 class DisplaysController < ApplicationController
   
   def index
-     @cons_yst = EnergyReading.yesterday(1).round(2).to_s
-     @prod_yst = EnergyReading.yesterday(2).round(2).to_s
-     @cons_now = EnergyReading.now(1).round(2).to_s
-     @prod_now = EnergyReading.now(2).round(2).to_s
+    @cons_yst = EnergyReading.yesterday(1).round(1).to_s
+    @prod_yst = EnergyReading.yesterday(2).round(1).to_s
+
+    @cons_now = EnergyReading.now(1).round(2).to_s
+    @prod_now = EnergyReading.now(2).round(2).to_s
   end
   
   def research
-  end
-  
-  def results
   end
   
   def orb
@@ -31,9 +29,10 @@ class DisplaysController < ApplicationController
         
     colors = to_colors(cons_now, prod_now, cons_yest, prod_yest)
 
+    # KAROL switched colors 
     @red = colors['red']
-    @green = colors['green']
-    @blue = colors['blue']
+    @green = colors['blue']
+    @blue = colors['green']
     
     weather = WeatherReading.find(:last)
     @wspd = weather.wind_speed.round(1)

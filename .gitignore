@@ -2,6 +2,8 @@
 config/database.yml
 config/pachube.yml
 log/*
+log/development.log
+log/server.log
 tmp/**/*
 doc/api
 doc/app
