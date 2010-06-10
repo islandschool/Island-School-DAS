@@ -31,15 +31,21 @@ begin
          msg = 'service_main entered at: ' + Time.now.to_s
          File.open(LOG_FILE, 'a'){ |f|
             f.puts msg
-            f.puts "Args: " + args.join(',')
+            #f.puts "Args: " + args.join(',')
          }
           p = nil
          
          while running?
-            if state == RUNNING
-              p = Poller.new
-              p.poll
-            end
+           if state == RUNNING
+             begin
+               p = Poller.new
+               p.poll
+             rescue Exception => e  
+               if !e.nil?
+                 File.open(LOG_FILE, 'a'){ |f| f.puts "ERROR: #" + e.message } 
+               end
+             end
+           end 
          end
       
          p = nil
